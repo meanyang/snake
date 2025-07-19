@@ -23,4 +23,28 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+#game-board {
+  background-color: #ccc;
+  width: 100vmin;
+  height: 100vmin;
+  display: grid;
+  grid-template-rows: repeat(21, 1fr);
+  grid-template-columns: repeat(21, 1fr);
+}
+
+.snake {
+  background-color: hsl(200, 100%, 50%);
+  border: 0.25vmin solid black;
+}
+
+.food {
+  background-color: hsl(50, 100%, 50%);
+  border: 0.25vmin solid black;
 }
