@@ -1,6 +1,15 @@
-"use client"; // Mark this file as a Client Component
+"use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const gameBoardRef = useRef<HTMLDivElement>(null);
@@ -11,8 +20,11 @@ export default function Home() {
   const [direction, setDirection] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [lastDirection, setLastDirection] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [gameOver, setGameOver] = useState(false);
+  const [playerName, setPlayerName] = useState('');
+  const [gameStarted, setGameStarted] = useState(false);
 
   useEffect(() => {
+    if (!gameStarted) return;
     const intervalId = setInterval(() => {
       if (gameOver) return;
       moveSnake();
@@ -21,9 +33,10 @@ export default function Home() {
     }, 100);
 
     return () => clearInterval(intervalId);
-  }, [snake, direction, gameOver]);
+  }, [snake, direction, gameOver, gameStarted]);
 
   useEffect(() => {
+    if (!gameStarted) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
         case "ArrowUp":
@@ -48,7 +61,7 @@ export default function Home() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [direction, lastDirection]);
+  }, [direction, lastDirection, gameStarted]);
 
   const moveSnake = () => {
     const head = { ...snake[0] };
@@ -67,6 +80,7 @@ export default function Home() {
       snake.slice(1).some((segment) => segment.x === head.x && segment.y === head.y)
     ) {
       setGameOver(true);
+      saveScore();
     }
   };
 
@@ -79,30 +93,86 @@ export default function Home() {
         newHead.y += direction.y;
         return [newHead, ...prevSnake];
       });
-      setFood({
-        x: Math.floor(Math.random() * 21) + 1,
-        y: Math.floor(Math.random() * 21) + 1,
+      let newFood: { x: number; y: number };
+      do {
+        newFood = {
+          x: Math.floor(Math.random() * 21) + 1,
+          y: Math.floor(Math.random() * 21) + 1,
+        };
+      } while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y));
+      setFood(newFood);
+    };
+  };
+
+  const startGame = () => {
+    if (playerName.trim()) {
+      setGameStarted(true);
+    }
+  };
+
+  const saveScore = async () => {
+    const score = snake.length - 1;
+    try {
+      const response = await fetch('/api/save-score', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ playerName, score }),
       });
+      const data = await response.json();
+      console.log('Player score saved:', data);
+    } catch (error) {
+      console.error('Error saving player score:', error);
     }
   };
 
   const restartGame = () => {
     setSnake([{ x: 11, y: 11 }]);
-    setFood({ x: 5, y: 5 });
+    // 随机生成食物位置
+    setFood({
+      x: Math.floor(Math.random() * 21) + 1,
+      y: Math.floor(Math.random() * 21) + 1,
+    });
     setDirection({ x: 0, y: 0 });
     setLastDirection({ x: 0, y: 0 });
     setGameOver(false);
+    setGameStarted(false);
   };
+
+  if (!gameStarted) {
+    // 在返回部分更新卡片结构
+    return (
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">
+            请输入你的名字
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Input
+            placeholder="玩家名称"
+            value={playerName}
+            onChange={(e) => setPlayerName(e.target.value)}
+            className="text-foreground"
+          />
+        </CardContent>
+        <CardFooter>
+          <Button
+            onClick={startGame}
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            开始游戏
+          </Button>
+        </CardFooter>
+      </Card>
+    );
+  }
 
   return (
     <div>
-      {gameOver && (
-        <div>
-          <p>游戏结束！</p>
-          <button onClick={restartGame}>重新开始</button>
-        </div>
-      )}
-      <div id="game-board" ref={gameBoardRef}>
+      {/* 游戏界面 */}
+      <div ref={gameBoardRef} id="game-board">
         {snake.map((segment, index) => (
           <div
             key={index}
@@ -121,6 +191,25 @@ export default function Home() {
           }}
         />
       </div>
+      {/* 游戏结束弹窗 */}
+      {gameOver && (
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">游戏结束！</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-foreground">你的分数: {snake.length - 1}</p>
+          </CardContent>
+          <CardFooter>
+            <Button
+              onClick={restartGame}
+              className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              重新开始
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
     </div>
   );
 }
