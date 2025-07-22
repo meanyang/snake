@@ -6,7 +6,10 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Snake Game',
-  description: 'A simple snake game'
+  description: 'A simple snake game',
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({
