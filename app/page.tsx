@@ -193,6 +193,40 @@ export default function Home() {
           }}
         />
       </div>
+      {/* 移动端控制按钮 */}
+      <div className="fixed bottom-4 left-0 right-0 flex justify-center z-40">
+        <div className="grid grid-cols-3 gap-2 max-w-xs w-full">
+          <div></div>
+          <Button
+            onClick={() => { if (lastDirection.y !== 1) setDirection({ x: 0, y: -1 }); setLastDirection(direction); }}
+            className="h-16 w-full bg-primary hover:bg-primary/90"
+          >
+            ↑
+          </Button>
+          <div></div>
+          <Button
+            onClick={() => { if (lastDirection.x !== 1) setDirection({ x: -1, y: 0 }); setLastDirection(direction); }}
+            className="h-16 w-full bg-primary hover:bg-primary/90"
+          >
+            ←
+          </Button>
+          <div></div>
+          <Button
+            onClick={() => { if (lastDirection.x !== -1) setDirection({ x: 1, y: 0 }); setLastDirection(direction); }}
+            className="h-16 w-full bg-primary hover:bg-primary/90"
+          >
+            →
+          </Button>
+          <div></div>
+          <Button
+            onClick={() => { if (lastDirection.y !== -1) setDirection({ x: 0, y: 1 }); setLastDirection(direction); }}
+            className="h-16 w-full bg-primary hover:bg-primary/90"
+          >
+            ↓
+          </Button>
+          <div></div>
+        </div>
+      </div>
       {/* 游戏结束弹窗 */}
       {gameOver && (
         <div className="fixed inset-0 flex items-center justify-center z-50 p-4 animate-fadeIn">
