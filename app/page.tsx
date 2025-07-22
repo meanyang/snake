@@ -22,7 +22,8 @@ export default function Home() {
   const [gameOver, setGameOver] = useState(false);
   const [playerName, setPlayerName] = useState('');
   const [gameStarted, setGameStarted] = useState(false);
-
+  const [gameStartTime, setGameStartTime] = useState<number | null>(null);
+  
   useEffect(() => {
     if (!gameStarted) return;
     const intervalId = setInterval(() => {
@@ -107,6 +108,7 @@ export default function Home() {
   const startGame = () => {
     if (playerName.trim()) {
       setGameStarted(true);
+      setGameStartTime(Date.now());
     }
   };
 
@@ -137,7 +139,7 @@ export default function Home() {
     setDirection({ x: 0, y: 0 });
     setLastDirection({ x: 0, y: 0 });
     setGameOver(false);
-    setGameStarted(false);
+    setGameStartTime(Date.now());
   };
 
   if (!gameStarted) {
@@ -193,22 +195,40 @@ export default function Home() {
       </div>
       {/* 游戏结束弹窗 */}
       {gameOver && (
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold">游戏结束！</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-foreground">你的分数: {snake.length - 1}</p>
-          </CardContent>
-          <CardFooter>
-            <Button
-              onClick={restartGame}
-              className="w-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              重新开始
-            </Button>
-          </CardFooter>
-        </Card>
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4 animate-fadeIn">
+          <Card className="w-full max-w-md animate-scaleIn bg-background border-0 shadow-lg rounded-xl overflow-hidden">
+            <CardHeader className="bg-primary/10 py-6">
+              <CardTitle className="text-2xl font-bold text-center text-primary">游戏结束！</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-8 pb-4 px-6">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">你的分数:</span>
+                  <span className="text-xl font-bold">{snake.length - 1}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">游戏时长:</span>
+                  <span className="text-xl font-bold">{gameStartTime ? Math.floor((Date.now() - gameStartTime) / 1000) : 0}秒</span>
+                </div>
+
+              </div>
+            </CardContent>
+            <CardFooter className="flex gap-3 pt-2 pb-6 px-6">
+              <Button
+                onClick={restartGame}
+                className="flex-1 bg-primary hover:bg-primary/90"
+              >
+                再玩一次
+              </Button>
+              <Button
+                onClick={() => window.location.reload()}
+                className="flex-1 bg-secondary text-secondary-foreground hover:bg-secondary/90"
+              >
+                返回首页
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
       )}
     </div>
   );
