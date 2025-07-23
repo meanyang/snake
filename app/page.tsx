@@ -23,6 +23,7 @@ export default function Home() {
   const [playerName, setPlayerName] = useState('');
   const [gameStarted, setGameStarted] = useState(false);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
+  const lastDirectionRef = useRef(lastDirection);
   
   useEffect(() => {
     if (!gameStarted) return;
@@ -31,7 +32,7 @@ export default function Home() {
       moveSnake();
       checkCollision();
       checkFood();
-    }, 100);
+    }, 150);
 
     return () => clearInterval(intervalId);
   }, [snake, direction, gameOver, gameStarted]);
@@ -39,25 +40,22 @@ export default function Home() {
   useEffect(() => {
     if (!gameStarted) return;
     const handleKeyDown = (e: KeyboardEvent) => {
+      const currentDir = lastDirectionRef.current;
       switch (e.key) {
         case "ArrowUp":
-          if (lastDirection.y !== 1) setDirection({ x: 0, y: -1 });
+          if (currentDir.y !== 1) setDirection({ x: 0, y: -1 });
           break;
         case "ArrowDown":
-          if (lastDirection.y !== -1) setDirection({ x: 0, y: 1 });
+          if (currentDir.y !== -1) setDirection({ x: 0, y: 1 });
           break;
         case "ArrowLeft":
-          if (lastDirection.x !== 1) setDirection({ x: -1, y: 0 });
+          if (currentDir.x !== 1) setDirection({ x: -1, y: 0 });
           break;
         case "ArrowRight":
-          if (lastDirection.x !== -1) setDirection({ x: 1, y: 0 });
-          break;
-        default:
+          if (currentDir.x !== -1) setDirection({ x: 1, y: 0 });
           break;
       }
-      if (direction.x !== 0 || direction.y !== 0) {
-        setLastDirection(direction);
-      }
+      setLastDirection(direction);
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -194,32 +192,42 @@ export default function Home() {
         />
       </div>
       {/* 移动端控制按钮 */}
-      <div className="fixed bottom-4 left-0 right-0 flex justify-center z-40">
-        <div className="grid grid-cols-3 gap-2 max-w-xs w-full">
+      <div className="relative mx-4 mb-4 mt-2 max-md:block md:hidden">
+        <div className="grid grid-cols-3 gap-1 max-w-[280px] mx-auto bg-primary/10 backdrop-blur-sm p-2 rounded-xl">
           <div></div>
           <Button
-            onClick={() => { if (lastDirection.y !== 1) setDirection({ x: 0, y: -1 }); setLastDirection(direction); }}
+            onClick={() => { if (lastDirection.y !== 1) { setDirection({ x: 0, y: -1 }); setLastDirection({ x: 0, y: -1 }); } }}
             className="h-16 w-full bg-primary hover:bg-primary/90"
           >
             ↑
           </Button>
           <div></div>
           <Button
-            onClick={() => { if (lastDirection.x !== 1) setDirection({ x: -1, y: 0 }); setLastDirection(direction); }}
+            onClick={() => { if (lastDirection.x !== 1) { setDirection({ x: -1, y: 0 }); setLastDirection({ x: -1, y: 0 }); } }}
             className="h-16 w-full bg-primary hover:bg-primary/90"
           >
             ←
           </Button>
           <div></div>
           <Button
-            onClick={() => { if (lastDirection.x !== -1) setDirection({ x: 1, y: 0 }); setLastDirection(direction); }}
+            onClick={() => { 
+              if (lastDirection.x !== -1) { 
+                setDirection({ x: 1, y: 0 });
+                setLastDirection({ x: 1, y: 0 });
+              }
+            }}
             className="h-16 w-full bg-primary hover:bg-primary/90"
           >
             →
           </Button>
           <div></div>
           <Button
-            onClick={() => { if (lastDirection.y !== -1) setDirection({ x: 0, y: 1 }); setLastDirection(direction); }}
+            onClick={() => { 
+              if (lastDirection.y !== -1) { 
+                setDirection({ x: 0, y: 1 });
+                setLastDirection({ x: 0, y: 1 });
+              }
+            }}
             className="h-16 w-full bg-primary hover:bg-primary/90"
           >
             ↓
