@@ -1,4 +1,5 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Snake Game
+
 
 [中文文档](README.zh-CN.md) | [English Documentation](README.md)
 
@@ -13,11 +14,9 @@ This is a Snake game project built with Next.js. Players can enter their names t
 - 🔄 Live score display & restart capability
 
 ## Technology Stack
-- **Framework**: Next.js
-- **Frontend**: React + Tailwind CSS
+- **Framework**: Next.js 15.4.2
+- **Frontend**: React 19.1.0, Tailwind CSS
 - **Database**: PostgreSQL
-
-## Project Structure
 
 ## Quick Start 🚀
 
@@ -26,19 +25,17 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to start playing!
-
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Database Setup 🔐
 Create `.env.local` with your PostgreSQL credentials:
 
 ```
-DB_USER=your_username
-DB_PASSWORD=your_password
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=snake_game
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_HOST=your_db_host
+DB_PORT=your_db_port
+DB_NAME=your_db_name
 ```
 Replace your_db_user, your_db_host, etc., with your actual database information.
 

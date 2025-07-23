@@ -2,8 +2,6 @@
 
 [English Documentation](README.md) | [中文文档](README.zh-CN.md)
 
-[English Documentation](README.md) | [中文文档](README.zh-CN.md)
-
 ## 项目介绍
 
 ## 核心功能 🎮
